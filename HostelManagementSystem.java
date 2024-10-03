@@ -14,7 +14,7 @@ public class HostelManagementSystem {
     public static void connectToDatabase() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // Correct for Connector/J 9.0.0
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db", "root", "aayush1291");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db", "root", "your password");
             System.out.println("Database connection established."); // Debugging line
         } catch (ClassNotFoundException e) {
             System.err.println("JDBC Driver not found. Please ensure the MySQL Connector/J JAR is included in the classpath.");
