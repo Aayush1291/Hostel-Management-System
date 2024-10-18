@@ -1,5 +1,5 @@
 import javax.swing.*;
-import javax.swing.table.JTableHeader; // Added import for JTableHeader
+import javax.swing.table.JTableHeader; 
 import java.awt.*;
 import java.sql.*;
 import java.util.Vector;
@@ -36,17 +36,19 @@ class ViewRoomsForm extends JFrame {
         Vector<Vector<Object>> dataVector = new Vector<>();
 
         try {
-            // Adjust the SQL query to only select relevant columns
+            // SQL query to select data from room_table and join with stud_table
+            String query = "SELECT room_table.room_no, room_table.student_id, stud_table.name " +
+                           "FROM room_table " +
+                           "JOIN stud_table ON room_table.student_id = stud_table.student_id";
             Statement stmt = HostelManagementSystem.connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT room_table.room_no, stud_table.student_id, stud_table.name " +
-                                              "FROM room_table LEFT JOIN stud_table ON room_table.student_id = stud_table.student_id");
+            ResultSet rs = stmt.executeQuery(query);
 
             // Retrieve data from the ResultSet
             while (rs.next()) {
                 Vector<Object> row = new Vector<>();
-                row.add(rs.getInt("room_no"));          // Room No
-                row.add(rs.getInt("student_id"));       // Student ID
-                row.add(rs.getString("name"));          // Student Name
+                row.add(rs.getInt("room_no"));        // Room No
+                row.add(rs.getInt("student_id"));     // Student ID
+                row.add(rs.getString("name"));        // Student Name
                 dataVector.add(row);
             }
         } catch (SQLException e) {

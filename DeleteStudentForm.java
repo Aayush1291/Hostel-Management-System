@@ -8,7 +8,7 @@ class DeleteStudentForm extends JFrame {
 
     public DeleteStudentForm(MainFrame mainFrame) {
         setTitle("Delete Student");
-        setSize(500, 300); // Increased window size
+        setSize(500, 300);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -37,17 +37,6 @@ class DeleteStudentForm extends JFrame {
         deleteButton.setForeground(Color.WHITE);
         deleteButton.setFocusPainted(false);
         deleteButton.setBorder(BorderFactory.createLineBorder(new Color(220, 20, 60), 2));
-
-        // Add Image to Button
-        try {
-            ImageIcon deleteIcon = new ImageIcon("resources/delete.png"); // Replace with your image path
-            Image img = deleteIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-            deleteButton.setIcon(new ImageIcon(img));
-            deleteButton.setHorizontalAlignment(SwingConstants.LEFT); // Align text to the left of the icon
-            deleteButton.setIconTextGap(20); // Gap between icon and text
-        } catch (Exception e) {
-            System.err.println("Delete Student icon not found.");
-        }
 
         deleteButton.addActionListener(e -> deleteStudent());
         formPanel.add(deleteButton);
@@ -87,12 +76,15 @@ class DeleteStudentForm extends JFrame {
             return;
         }
 
+        PreparedStatement ps = null;
+        PreparedStatement psRoom = null;
+        
         try {
             // Start a transaction
             HostelManagementSystem.connection.setAutoCommit(false);
 
             // Delete from stud_table
-            PreparedStatement ps = HostelManagementSystem.connection.prepareStatement(
+            ps = HostelManagementSystem.connection.prepareStatement(
                 "DELETE FROM stud_table WHERE student_id=?");
             ps.setInt(1, studentId);
             int rowsAffected = ps.executeUpdate();
@@ -104,7 +96,7 @@ class DeleteStudentForm extends JFrame {
             }
 
             // Delete from room_table
-            PreparedStatement psRoom = HostelManagementSystem.connection.prepareStatement(
+            psRoom = HostelManagementSystem.connection.prepareStatement(
                 "DELETE FROM room_table WHERE student_id=?");
             psRoom.setInt(1, studentId);
             psRoom.executeUpdate();
@@ -124,6 +116,8 @@ class DeleteStudentForm extends JFrame {
             JOptionPane.showMessageDialog(this, "Error deleting student!", "Error", JOptionPane.ERROR_MESSAGE);
         } finally {
             try {
+                if (ps != null) ps.close(); // Close the PreparedStatement
+                if (psRoom != null) psRoom.close();
                 // Reset auto-commit to true
                 HostelManagementSystem.connection.setAutoCommit(true);
             } catch (SQLException ex) {
